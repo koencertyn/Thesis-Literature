@@ -1,0 +1,85 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Mogelijke scenario's}
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\section{Uitgebreid en interactief sociaal leer platform }
+\subsection{Omschrijving}
+
+Op veel verschillende sociale fora is het al reeds mogelijk om een beperkte hoeveelheid bestanden (zijnde pdf's, jpg's, .. ) te gebruiken en door te sturen.  
+
+Indien we een zeer groot interactief platform ontwerpen waar studenten over verschillende vakken kunnen discussiëren, oplossingen delen, films van lessen delen, ed.
+
+
+De reden is terug te vinden bij de huidige opslagcapaciteit van de servers bij VTK. Deze zijn beperkt en hierdoor zijn we niet in staat om alle bestanden op onze eigen infrastructuur op te slagen.  Verder zou er tijdens de blok- en examenperiode een bottleneck kunnen ontstaan omdat alle bestanden van één bepaalde server en database gedownload moeten worden. \\
+
+Indien we gebruik maken van de publieke cloud, om de grote bestanden om te slagen, kunnen we één platform creëren dat alle mogelijke data bevat.  Omdat de hoeveelheid beschikbaar geheugen geen probleem meer stelt is het mogelijk om per hoorcollege en oefenzitting video's, foto's, ... op te slaan.  Dit zal leiden tot een enorme verzameling van data waaraan iedereen zal kunnen bijdragen.\\
+
+De meeste studenten zullen deze data raadplegen tijdens de blok en/of examenperiode.  Om te voorkomen dat er een bottleneck zou optreden kunnen we nu tijdelijk de volledige database kopiëren naar een andere virtuele server.  \texttt{Load balancing} lost dan de rest van het probleem op.  Indien blijkt dat er nog steeds grote vertragingen optreden, kunnen we nog extra VM's in de cloud toevoegen.\\
+
+
+\subsection{Mogelijke scenario's}
+\begin{enumerate}
+    \item Personen willen extra beeldmateriaal bij de discussie voegen. \\
+    
+Omdat de opslagcapaciteiten van VTK hier niet op voorzien is moeten we dit uitbreiden naar de publieke cloud.  Kleine video's kunnen wel toegelaten worden in de private cloud. 
+Het systeem zal de grootte van de video analyseren en beslissen of het in eigen of publieke cloud opgeslagen moet worden.  Indien we deze data op de publieke cloud zetten, gaan we dit ook moeten encrypteren.
+    
+    \item Beschikbaarheid tijdens de blok en examenperiode. \\
+
+De meeste van deze bestanden zullen extensief gebruikt worden tijdens de blok en examenperiode.
+Om ervoor te zorgen dat elke student de bestanden zonder veel probleem kan raadplegen of downloaden gaan we in de publieke cloud meerdere machines \texttt{booten} om zo aan alle \texttt{requests} te kunnen voldoen.
+Dit \texttt{booten} kan dynamisch \footnote{wanneer de vertraging voor de gebruikers te groot begint te worden} of statisch\footnote{in het begin van de blok starten we automatisch een gedupliceerde server op die mee helpt met de \texttt{load balancing}} gebeuren. 
+\end{enumerate}
+
+\newpage
+
+\section{Het uitbesteden van rekenkracht bij het maken van rekeningen ed.}
+\subsection{Omschrijving}
+Normaal is er bij het genereren van rekeningen maar een kleine rekenkracht vereist.  Het verwerken van een paar honderden (of zelfs duizenden) rekeningen is normaal geen enkel probleem en kan in de eigen private cloud gebeuren. Natuurlijk kan het zijn dat bedrijven plots enorm veel rekeningen willen uitsturen naar hun klanten (denk aan facturen op het einde van de maand, loonbrieven, ..).  Deze berekeningen kunnen we op ons eigen private cloud systeem niet (of veel te traag) uitvoeren.  \\
+
+De oplossing van dit probleem ligt in het gebruik van een publieke cloud service die zal helpen met de rekeningen op korte termijn te genereren wanneer de eigen infrastructuur te traag zal zijn.  
+
+
+\subsection{Mogelijke scenario's}
+\begin{enumerate}
+    \item De private en publieke cloud moet zo efficiënt mogelijk gebruikt worden.\\
+    
+Het beste scenario is dat alle berekeningen in de eigen private cloud kunnen gebeuren.  Wanneer er dus nog mogelijkheid is om de berekeningen in de eigen private cloud te doen moet dit gedaan worden.  Als de server te traag aan het worden is gaan we VM's beginnen \texttt{booten} die kunnen helpen met deze taak.
+
+    
+    \item De data die verwerkt moet worden is vertrouwelijk.\\
+    
+De data die verwerkt moet worden kan vertrouwelijk zijn.  Om deze vertrouwelijke data te beschermen kunnen we twee verschillende stappen ondernemen.
+        \begin{enumerate}
+            \item We weigeren vertrouwelijke data te verwerken in de publieke cloud.  Hierdoor zijn we zeker dat de data nooit in verkeerde handen zal komen.  Een nadeel van deze situatie is de gelimiteerde rekenkracht van de eigen private cloud die eraan verbonden zit.  Indien er veel berekeningen moeten gebeuren met vertrouwelijke data, zullen er veel vertragingen optreden.
+            \item Vertrouwelijke data zal geëncrypteerd moeten worden indien we deze naar de publieke cloud overbrengen.  Hierdoor beschermen we de inhoud van de data maar de data zelf niet.  We moeten er vanuit gaan dat alles wat zich in de publieke cloud zal afspelen, toegankelijk is voor iedereen.  Natuurlijk is dit het \texttt{Worst-Case Scenario} maar aangezien we met vertrouwelijke data werken kunnen we nooit het risico nemen.
+        \end{enumerate}
+    
+    \item De data moet zo rap mogelijk verwerkt worden.\\
+
+Als de data zo rap mogelijk verwerkt moet worden zijn er verschillende opties die mogelijk zijn :
+        \begin{enumerate}
+            \item Het verwerken moet zo rap mogelijk gaan, ongeacht de kost. \\
+            Bij dit scenario kunnen we het beste alle berekeningen doorsturen naar de publieke cloud op verschillende machines.  Hoe meer machines werken aan deze taak, hoe rapper dit gedaan zal zijn.  Het aantal virtuele machines die we in de publieke cloud gebruiken staan recht evenredig aan de kostprijs van dit proces.
+            \item Het verwerken moet zo rap mogelijk gaan maar met een \texttt{aanvaardbare} kost.\\
+Aanvaardbaar hier wil zeggen dat er wel zeker een kost aan verbonden mag worden maar dat deze wel redelijk moet blijven.  We gaan dus optimaal gebruik moeten maken van de private en publieke cloud om deze taak te verwerken.
+        \end{enumerate}
+Een duidelijke afspraak omtrent de prijzen is dus noodzakelijk.
+    
+    \item De data moet zo goedkoop mogelijk verwerkt worden \\
+    
+Aangezien er al een private cloud aanwezig is, zijn alle berekening die daar gebeuren "gratis".  We gaan dus opteren om alle berekening in de private cloud te doen.  Omdat we de berekeningen enkel in de private cloud willen uitvoeren kan het zijn dat hier een bottleneck zal ontstaan.  We kunnen dit vermijden door enkele mogelijke principes toe te passen :
+        \begin{enumerate}
+            \item Elk ander proces krijgt voorrang ten opzichte van het goedkoopste proces in de private cloud.  Het goedkope proces zal dan moeten wachten tot de andere klaar zijn om zijn eigen werk verder te zetten.
+            \item Er zal en andere VM \texttt{geboot} worden in de publieke cloud voor andere, niet "goedkope", processen.  Dit is zeker niet de beste oplossing aangezien, door de aanwezigheid van een "goedkoop" proces, de andere processen meer gaan moeten betalen omdat deze nu in de publieke cloud verwerkt zullen worden.
+        \end{enumerate}
+\end{enumerate}
+
+
+\end{document}
+

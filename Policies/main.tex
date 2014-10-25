@@ -1,0 +1,154 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Policies}
+\author{Koen Certyn}
+\date{October 2014}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\begin{document}
+
+\section{Algemeen}
+Algemeen gaan we ons systeem voorzien van een \texttt{Dynamische Cloud Booter} die ervoor gaat zorgen dat het systeem VM's gaat booten wanneer de eigen load te hoog zou worden.
+Hierdoor vereenvoudigen en versnellen we het proces om short jobs over te zetten naar de publieke cloud. 
+
+Verder gaan we ook nog rekening moeten houden met encryptie.  Indien de gebruiker expliciet vraagt om encryptie moeten we zien dat het platform waarop we dit deployen ook encryptie kunnen voorzien.
+
+\section{Short Jobs}
+Als de geschatte responstijd van de berekening op minder dan 2 minuten zou bedragen, classificeren deze berekening onder de \texttt{Short Jobs}.  Deze jobs zullen we meteen uitvoeren.  Bij de short jobs zal ook geen rekening gehouden worden met de vereisten om het zo rap mogelijk, zo goedkoop mogelijk, .. te doen.
+\begin{enumerate}   
+    \item Als de gebruiker een berekening request met een uitvoeringstijd van minder dan 10 seconden dan gaan we deze in de eigen private cloud uitvoeren tenzij de load hoger is dan 90\%.  \\Indien de private load te hoog is:
+    \begin{enumerate}
+        \item Zal de job in de lokale wachtrij gezet worden.
+        \item Als het aantal jobs in de lokale wachtrij groter is dan vijf zal de berekening naar de publieke cloud overgezet worden. Indien er meer dan x hoeveelheid data mee overgezet moet worden, voegen we de berekening toch toe aan de private cloud.
+    \end{enumerate}
+\end{enumerate}
+\section{Long Jobs}
+\texttt{Long jobs} zijn jobs waarvan de geschatte uitvoeringstijd meer dan 2 minuten vraagt.
+\subsection{Prioriteit : Zo snel mogelijk}
+De prioriteit van deze berekening is zo snel mogelijk.  De gebruiker wil dat de berekening zo snel mogelijk gedaan is, ongeacht de kost.  De focus zal dus voornamelijk liggen op het overzetten naar de publieke cloud.
+\subsubsection{Beperkte hoeveelheid benodigde data}
+De hoeveelheid benodigde data is kleiner dan 50MB.
+\begin{itemize}
+    \item De private load is $< 20$\% \\
+    Indien de private load $< 20$\% kiezen we ervoor om de berekening lokaal uit te voeren.  Door de hoge vereisten die we stellen kunnen we er vanuit gaan dat de berekening lokaal vrij rap zou gaan. 
+    \newpage
+    
+    \item De private load is $> 20$\% en \texttt{Bootingstijd VM} $< 20$\% van de geschatte uitvoeringstijd \\
+    Indien aan deze vereisten voldaan is, kiezen we ervoor om de berekeningen naar de publieke cloud te verplaatsen.  Hierdoor zal de vereiste rekentijd zeer beperkt blijven.  We houden ook rekening met de geschatte \texttt{Bootingstijd} van de VM.  Als de \texttt{bootingstijd} groter is dan een vooraf bepaald percentage is het vaak de moeite niet om de berekeningen naar de publieke cloud te forwarden.
+    \item De private load is $> 20$\% $< 70$\% en \texttt{Bootingstijd VM} $> 20$\% van de geschatte uitvoeringstijd \\
+    Nu kiezen we ervoor om de berekening lokaal uit te voeren.
+    \item De private load is $> 70$\%
+    De berekening zal sowieso in de publieke cloud uitgevoerd worden.
+\end{itemize}
+
+\subsubsection{Aanzienlijke hoeveelheid benodigde data}
+De hoeveelheid benodigde data is groter dan 50MB.
+\begin{itemize}
+    \item De private load is $< 20$\% en de hoeveelheid extra data $< 150MB$ \\
+    Indien de private load $< 20$\% kiezen we ervoor om de berekening lokaal uit te voeren.  Door de hoge vereisten die we stellen kunnen we er vanuit gaan dat de berekening lokaal vrij rap zou gaan. 
+    \item De private load is $< 20$\% en de hoeveelheid extra data $> 150MB$ \\
+    Door de grote hoeveelheid data die we op onze server zouden moeten bijhouden, verkiezen we om deze berekening ook sowieso in de cloud te doen.  We zetten dan ook de benodigde data over.
+    \item De private load is $> 20$\%
+    De berekening zal sowieso in de publieke cloud uitgevoerd worden.
+\end{itemize}
+    
+\subsection{Prioriteit : Zo goedkoop mogelijk}
+De enigste vereiste die de gebruiker ons hier stelt is dat de berekeningen gedaan moeten worden tegen een zo goedkoop mogelijke prijs.  We gaan dus (bijna) nooit gebruik maken van de publieke cloud.
+\subsubsection{Beperkte hoeveelheid benodigde data}
+\begin{itemize}
+    \item De private load is $< 30$\% \\
+    Indien de private load $< 30$\% kiezen we ervoor om de berekening lokaal uit te voeren.  Als de huidige berekening de oorzaak is dat andere berekeningen met hogere prioriteit (Zie Prioriteit: Zo snel mogelijk) naar de cloud moeten, pauzeren we deze berekening.
+    \item De private load is $> 30$\% en er zijn andere processen bezig.
+    Dan stoppen we dit proces totdat de private load terug kleiner is dan $30$.
+\end{itemize}
+\subsubsection{Aanzienlijke hoeveelheid benodigde data}
+??
+\subsection{Prioriteit : Balanceerde uitvoering}
+\subsubsection{Beperkte hoeveelheid benodigde data}
+De hoeveelheid benodigde data is kleiner dan 50MB.
+\begin{itemize}
+    \item De private load is $< 50$\% \\
+    Indien de private load $< 50$\% kiezen we ervoor om de berekening lokaal uit te voeren. 
+    \item De private load is $> 50$\% en $< 70$\%
+    Nu kiezen we ervoor om de berekening lokaal uit te voeren.  Indien we merken dat de lokale load niet meer daalt, kiezen we ervoor om dit process uiteindelijk naar de publieke cloud over te dragen.
+    In tussentijd zal er hier een VM geboot worden zodat we tijdig alle resources kunnen overzetten.  (Indien de het type berekening ons dit toelaat).
+    \item De private load is $> 70$\%
+    De berekening zal sowieso in de publieke cloud plaatsvinden.
+\end{itemize}
+\subsubsection{Aanzienlijke hoeveelheid benodigde data}
+Hierbij treffen we dezelfde regeling als bij \texttt{Prioriteit:zo snel mogelijk}
+
+\section{Verschillende aspecten}
+\begin{itemize}
+    \item Het type prioriteit
+    \item encryptie
+    \item benodigde data
+\end{itemize}
+
+\section{Voorgestelde Policy Language}
+We gaan gebruik maken van de volgende configuratie: \\
+\begin{center}
+\begin{minipage}{.6\textwidth}
+$<Priority>Fast</Priority>\\
+<Encryption>Required</Encryption>\\
+<Data>Small</Data>$\\
+\end{minipage}
+\end{center}
+
+Mogelijke items voor prioriteit zouden de volgende zijn :
+\begin{itemize}
+\item Fast
+\item Cheap
+\item Balanced
+\end{itemize}
+Encryption :
+\begin{itemize}
+\item Required
+\item Prefered
+\item None
+\end{itemize}
+Data :
+\begin{itemize}
+\item Small ($< 50$) MB
+\item Medium ($> 50$) en ($< 150$) MB
+\item Large ($> 150$) MB
+\end{itemize}
+Intern definiëren we we de volgende eigenschappen voor de verschillende open source platformen: (alvast een voorbeeld).
+\begin{center}
+\begin{minipage}{.6\textwidth}
+$<Platform>Heroku</Platform>\\
+<Encryption>Basic</Encryption>\\
+<Log>Extended</Log>\\
+<DataModel>Basic</DataModel>\\
+<Processing>Basic</Processing>\\
+<Deployment>Average</Deployment>\\
+<Cost>Low</Cost>$\\
+\end{minipage}
+\end{center}
+
+\newpage
+
+De verschillende eigenschappen kunnen het volgende bevatten:
+\begin{itemize}
+    \item Platform : \\
+    Platform duidt de naam van het platform aan. (Verdere specificaties kunnen dan nog intern opgezocht worden)
+    \item Encryption : \\
+    Indien er de mogelijkheid is tot encryption duiden we dit ook aan.
+    \item Log : \\
+    Sommige cloudplatformen voorzien een zeer gedetailleerde log waarin alle kosten duidelijk te zien zijn.  Voor sommige applicaties kan het handig zijn dat dit ter beschikking staat.
+    \item DataModel : \\
+    Dit aspect heeft oog naar hoe het cloudplatform omgaat met data en hoeveel data het kan verwerken.
+    \item Processing : \\
+    Sommige platformen hebben een grotere beschikbare (of schaalbare) rekenkracht.  Naar mate de vereisten van de applicatie kunnen we dit dus optimaal kiezen.
+    \item Deployment : \\
+    Hoe snel kan de code gedeployed worden naar de specifieke cloud.
+    \item Cost : \\
+    Hoe veel kost het gebruik van de specifieke cloud.
+\end{itemize}
+
+
+
+\end{document}
+
