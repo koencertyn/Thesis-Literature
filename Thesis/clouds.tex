@@ -1,0 +1,39 @@
+\Section{Cloudplatformen}~\ref{sec:Cloud}
+Op dit moment zijn er drie verschillende soorten cloudplatformen beschikbaar elk met hun eigen voor- en nadelen.
+De eerste soort zijn IaaS of \texttt{infrastructure as a service} platformen.
+
+//TODO image overzicht 3 platformen
+
+Omdat dit soort platform enkel de infrastructuur voorziet moet de gebruiker zelf zijn operating system, applications ed. moeten installeren.
+Dit heeft als groot voordeel de uitbreidbaarheid en controle die de gebruiker nu zelf in de hand heeft.
+Nadelig is de complexiteit van ontwikkelen die hierdoor naar omhoog gaat.\newline
+
+Een tweede soort voorziet al reeds de installatie van operating system alsook van de gewenste programma's.
+Dit soort cloudplatform noemt men een PaaS of \texttt{platform as a service}.
+Het grootste voordeel van dit platform is dat de gebruiker zich niet moet bezighouden met het installeren van operatingsystemen, programma's ed.
+De voordelen die hieraan verbonden zijn is dat de programmeur zich niets moet aantrekken van het achterliggend systeem en zich kan focussen op de applicatie.
+
+De laatste soort, SaaS of \texttt{software as a service} biedt al reeds geïnstalleerde software aan die direct te gebruiken is.
+
+In deze thesis ga ik gebruik maken van de PaaS platformen omdat deze al reeds voorgeconfigureerde systemen aanbied.
+Er zijn natuurlijk ook verschillende PaaS platformen waaruit gekozen moet worden.
+In de volgende onderdelen is een overzicht van de voornaamste platformen met hun voor- en nadelen.
+
+
+\Section{Openshift}~\ref{sec:Openshift}
+Openshift, ontworpen door redHat, is één van de vele cloudproviders die PaaS platformen aanbieden.
+Het maakt gebruik van verschillende \texttt{nodes} die op de reeds bestaande infrastructuur draaien.
+In deze \texttt{nodes} zitten verschillende \texttt{gears} die verantwoordelijk zijn voor het draaien van de applicatie.
+De applicatie kan ook nog verschillende tools gebruiken, deze worden \texttt{cartridges} genoemd.
+Het is dus mogelijk om eigen gemaakte software in deze cartridges te steken om zo mee te deployen.
+Tijdens het deployen sluit de applicatie af om zo via Maven\footnote{TODO} alle nodige dependencies te installeren.
+Deployen kan gedaan worden op verschillende mogelijkheden :
+\begin{itemize}
+	\item Deployment via GitHub
+	\item Deployment via .war files
+\end{itemize}
+Het voordeel van Openshift is de eenvoudigheid van deployen alsook de verschillende mogelijkheden van talen die ondersteund worden.
+
+\Section{Heroku}~\ref{sec:Heroku}
+
+\Section{Google App Engine}~\ref{sec:GAE}
