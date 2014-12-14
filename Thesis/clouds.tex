@@ -1,4 +1,4 @@
-\Section{Cloudplatformen}~\ref{sec:Cloud}
+\section{Cloudplatformen}~\ref{sec:Cloud}
 Op dit moment zijn er drie verschillende soorten cloudplatformen beschikbaar elk met hun eigen voor- en nadelen.
 De eerste soort zijn IaaS of \texttt{infrastructure as a service} platformen.
 
@@ -20,20 +20,96 @@ Er zijn natuurlijk ook verschillende PaaS platformen waaruit gekozen moet worden
 In de volgende onderdelen is een overzicht van de voornaamste platformen met hun voor- en nadelen.
 
 
-\Section{Openshift}~\ref{sec:Openshift}
+\subsection{Openshift}~\ref{sec:Openshift}
 Openshift, ontworpen door redHat, is één van de vele cloudproviders die PaaS platformen aanbieden.
 Het maakt gebruik van verschillende \texttt{nodes} die op de reeds bestaande infrastructuur draaien.
 In deze \texttt{nodes} zitten verschillende \texttt{gears} die verantwoordelijk zijn voor het draaien van de applicatie.
 De applicatie kan ook nog verschillende tools gebruiken, deze worden \texttt{cartridges} genoemd.
-Het is dus mogelijk om eigen gemaakte software in deze cartridges te steken om zo mee te deployen.
+Openshift heeft een hele lijst cartridges die ze aanbieden met o.a. \texttt{phpPgAdmin, pgSql, mongoDB, jenkins, ..}.
+Naast de al reeds bestaande cartridges is het ook mogelijk om eigen gemaakte software in cartridges te steken om zo mee te deployen.
 Tijdens het deployen sluit de applicatie af om zo via Maven\footnote{TODO} alle nodige dependencies te installeren.
 Deployen kan gedaan worden op verschillende mogelijkheden :
 \begin{itemize}
-	\item Deployment via GitHub
+	\item Deployment via GitHub\footnote{www.github.com is een website waar code kan opgeslagen worden in publieke en private repositories.}
 	\item Deployment via .war files
 \end{itemize}
-Het voordeel van Openshift is de eenvoudigheid van deployen alsook de verschillende mogelijkheden van talen die ondersteund worden.
+Het voordeel van Openshift is de eenvoudigheid van deployen (die vooral ligt in de deployment via git) alsook de verschillende mogelijkheden van talen die ondersteund worden.
+Deployen via .war files is niet zo intuitief waaruit blijkt dat de methode via git de hoofdmethode is om de deployment uit te voeren.
 
-\Section{Heroku}~\ref{sec:Heroku}
+Aangezien we in onze policies ook rekening houden met prijzen moet dit ook kort aangehaald worden.
+Openshift biedt gratis ondersteuning voor 3 \texttt{gears} en tot één gigabyte van opslag.
+Hierdoor kunnen applicaties die weinig data nodig hebben gratis op Openshift gedeployed worden.
 
-\Section{Google App Engine}~\ref{sec:GAE}
+\subsection{Heroku}~\ref{sec:Heroku}
+Heroku werkt volgens verschillende \texttt{dynos} die abstracte computatie eenheden of componenten voorstellen.
+Er zijn 2 grote soorten \texttt{dynos}
+\begin{itemize}
+	\item Web dynos
+	\item Worker dynos
+\end{itemize}
+Web dynos zijn componten die instaan voor alle directe HTTP requests en handelen deze af.
+De \texttt{web dynos} kunnen dus gezien worden als de front-end van de website.
+
+Naast de \texttt{web dynos} hebben we de \texttt{worker dynos}.
+De \texttt{worker dynos} staan in voor alle taken die in de wachtrij staan en vervullen dus de rol van back-end.
+
+Net als Openshift biedt heroku de mogelijkheid om te werken met een paar verschillende talen, hoewel het aanbod kleiner is dan Openshift, alsook een 150 applicaties die meteen te gebruiken zijn.
+
+Voor de deployment is de aandacht volledig gegaan naar de integratie met github.  Als code naar de github repository wordt gepushed, start de automatische deployement en dependency installatie.  Deployment buiten gebruik van github gaat moeizaam, bv door gebruik te maken van .war files.
+
+Het gebruik van Heroku heeft een paar duidelijke voordelen ten opzichte van andere cloudplatformen.
+De vooraf bepaalde opsplitsing in 2 verschillende dynos maakt het zeer eenvoudig om een basis applicatie te schrijven.  Hierdoor krijg je meteen een duidelijk overzicht welke componenten verantwoordelijk zijn voor front-end en back-end.  Verder is de eenvoudigheidheid van deployen het aspect waarbij de meeste ontwikkelers aangetrokken worden.
+
+Het grootste nadeel van heroku is de beperking in het schalen.  Vele cloudplatformen schalen automatisch indien de applicatie meer ruimte nodig heeft, Heroku doet dit echter niet.  Men moet manueel ingeven hoe men de applicatie verder wil schalen.
+
+
+\subsection{Google App Engine}~\ref{sec:GAE}
+
+Natuurlijk hoort Google App Engine ook thuis in deze rij.
+In tegenstelling tot de andere besproken platformen biedt Google App Engine, die zeer populair is , vrij weinig vrijheid om te werken in hun omgeving.
+De beperkingen zijn op te noemen in de volgende onderdelen:
+\begin{itemize}
+	\item Sandbox programma
+	\item maximale respons tijd
+	\item Datastore
+\end{itemize}
+Het concept van een \texttt{sandbox} programma houdt in dat de processen zelf niets kunnen veranderen aan de onderliggende lagen.
+Verder is het ook niet mogelijk om andere machines te raadplegen via URL fetch requests.
+
+Als een request langer dan 60 seconden duurt om te beantwoorden, gaat dit ook niet gedaan worden in Google App Engine.
+Het is dus niet mogelijk om zeer complexe berekeningen uit te voeren in één bepaalde request of commando.
+Een mogelijk alternatief hiervoor is het opsplitsen van de calculatie in vele verschillende submodules die elk minder dan 60 seconden rekentijd vragen.
+
+Hoewel de twee bovenvermelde elementen enkel nadelig lijken, hebben ze ook enkele voordelen.
+Door de programma's in een \texttt{sandbox} te draaien zijn de processen volledig beschermd van de buitenwereld.
+De grote en dynamische schaalbaarheid van Google App Engine zorgen ervoor dat alle submodulaire processen toch verwerkt kunnen worden in een beperkte tijdspanne.
+
+Google App Engine heeft ook een eigen \texttt{Datastore} met bijhorende \texttt{GQL}\footnote{GQL of Google Cloud SQL is based on MySQL.}.  Hierdoor is het niet mogelijk om met eigen datastores programmas te werken zoals doctrine, mongo, MySQL, ed.
+
+\subsection{Conclusies voor gebruik in deze thesis}
+Uit de korte analyse van deze verschillende cloudplatformen kunnen we beter beslissen hoe algemene policies zouden moeten werken.
+Het is duidelijk dat elk cloudplatform bepaalde sterktes en zwaktes heeft.
+Hieruit kunnen we de volgende voordelen van elk platform op een rij zetten :
+\begin{itemize}
+	\item Openshift
+	\begin{itemize}
+		\item Zeer snel deploybaar
+		\item Vele verschillende aangeboden \texttt{cartridges}
+		\item Automatische schaalbaarheid
+		\item Granulariteit door mogelijkheid om gears specifieke taken te geven
+	\end{itemize}
+	\item Heroku
+	\begin{itemize}
+		\item Zeer snel deploybaar
+		\item Veel verschillende aangeboden extenties
+		\item Duidelijke front- en backend
+		\item Duidelijk transaction logging
+	\end{itemize}
+	\item Google App Engine
+	\begin{itemize}
+		\item Enorme schaalbaarheid zeker in de vorm van data-opslag.
+		\item \texttt{Sandbox} concept
+	\end{itemize}
+\end{itemize}
+
+

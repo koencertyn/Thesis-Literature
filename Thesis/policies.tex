@@ -1,0 +1,77 @@
+\section~\ref{sec:policies}
+Om de verschillende soorten requests die binnenkomen te kunnen afhandelen maken we gebruik van policies.
+Deze \texttt{policyEngine} is verantwoordelijk voor het verdelen van deze requests.
+
+Uit de sectie waar de verschillende clouds voorgesteld worden, kunnen we opmaken dat elke cloud specifieke eigenschappen heeft.
+Deze eigenschappen gaan vooraf bepaald moeten worden om de een basis onderscheid te kunnen maken.
+
+\subsection{Cloud eigenschappen}
+\subsubsection{Eigenschappen}
+Verschillende eigenschappen zijn nodig om elk cloudplatform individueel te kunnen voorstellen.
+Dit zijn de belangrijkste eigenschappen :
+\begin{itemize}
+	\item Bootsnelheid
+	\item Schaalbaarheid
+	\item Datamanagement
+	\item Encryption
+\end{itemize}
+Deze krijgen allemaal een waarde toegewezen tussen 0 en 5, respectievelijk zwak naar sterk of 0 en 1.
+
+De bootsnelheid is belangrijk voor applicaties waarvan de berekentijd vrij klein is.
+Het voordeel dat we zouden krijgen bij het uitbreiden naar de cloud zou dan volledig weg zijn.
+Bootsnelheid zou maximaal een tiental procent mogen bedragen van de totale vereiste responstijd.
+
+De schaalbaarheid heeft belang voor processen die veel rekenkracht vragen.
+
+Datamanagement houdt in hoe een gegeven platform met data omgaat.
+Hoe meer mogelijkheden er zijn om met data om te gaan, hoe hoger dit cijfer zal liggen.
+
+Encryption spreekt normaalgezien voor zich.
+Sommige cloudplatformen bieden een basisencryptie aan terwijl anderen dit niet doen.
+
+\subsubsection{Formaat}
+Om zeker te zijn dat de \texttt{policyEngine} de vooraf bepaalde cloud eigenschappen kan interpreteren, moeten we een uniform formaat afspreken waarin deze beschreven zullen worden.
+Ik heb ervoor gekozen om dit te doen op een XML gebaseerde stijl omdat iedereen hier al mee gewerkt heeft.
+Het uiteindelijke bestand\footnote{\texttt{(CloudConfig.conf)}} waarin alle cloud eigenschappen in zullen komen, zal dus het volgende formaat hebben :
+<cloud>
+	<name> CloudName </name>
+	<boot> Value 0-5 </boot>
+	<scale> Value 0-5 </scale>
+	<enc> Value 0-1 </enc>
+</cloud>
+
+Met als voorbeeld Openshift :
+<cloud>
+	<name> Openshift </name>
+	<boot> 4 </boot>
+	<scale> 4 </scale>
+	<enc> 1 </enc>
+</cloud>
+
+Uit een lijst van vorige eigenschappen kunnen we per request de beste cloud kiezen.
+
+\subsection{Requestproperties}
+
+Voor we de meest optimale cloud kunnen kiezen moeten we het type request ook analyseren.
+Een request heeft een paar eigenschappen die we moeten bepalen om deze door onze \texttt{policyEngine} te laten analyseren.
+\begin{itemize}
+	\item Geschatte verwerkingstijd
+	\item Type request
+	\item Tarief
+\end{itemize}
+De geschatte verwerkingstijd is nodig om in te schatten wat de maximale bootsnelheid van de cloud mag zijn.
+Deze schatting zal gebaseerd zijn op gelijkaardige processen die in het verleden zijn behandeld.
+
+Het type request is ook van enorm belang.
+Er is een groot verschil in policies tussen het enkel opslaan van data (video's, afbeeldingen, ..) of het uitvoeren van een complexe wetenschappelijke berekening.
+
+De prijs hangt af van een paar verschillende elementen.  Een eerste is de kostprijs van de publieke cloud.  Deze kan vast of variabel zijn.
+Indien voor het goedkoopste traject gekozen zal worden, gaat er geen forwarding naar de cloud plaatsvinden en zal het proces enkel lokaal draaien.
+Dit is enkel van toepassing voor requests waarvan de aard computationeel gericht is.
+
+
+
+
+
+
+
